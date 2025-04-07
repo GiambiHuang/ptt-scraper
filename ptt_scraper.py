@@ -57,7 +57,7 @@ class PTTScraper:
                 title = title_element.text.strip()
                 if not title.startswith('[售票]'):
                     continue
-                if any(keyword in title for keyword in ["綁", "合售"]):
+                if any(keyword in title for keyword in ["綁", "合售", "+"]):
                     continue
                 if any(keyword in title for keyword in keywords):
                     author = post.find('div', class_='author').text.strip()
@@ -112,30 +112,29 @@ class PTTScraper:
             except Exception as e:
                 print("Login")
 
-            try:
-                page.wait_for_selector('text=重複登入', timeout=2000)
-                page.keyboard.press('Y')
-                page.keyboard.press('Enter')
-                print("Login success")
-            except Exception as e:
-                print("Login success")
-            
-            try:
-                page.wait_for_selector('text=任意鍵', timeout=2000)
-                page.keyboard.press('Enter')
-                page.wait_for_selector('text=任意鍵', timeout=2000)
-                page.keyboard.press('Enter')  # 按下 Enter 鍵進行提交
-                print("-")
-            except Exception as e:
-                print("-")
+            isOk = False
 
-            try:
-                page.wait_for_selector('text=私人信件區', timeout=2000)
-                page.keyboard.press('M')
-                page.keyboard.press('Enter')
-                print("-")
-            except Exception as e:
-                print("-")
+            while not isOk:
+                page.wait_for_timeout(1000)
+                try:
+                    isSendMail = page.locator('text=站內寄信')
+                    if not isSendMail.is_visible():
+                        page.wait_for_selector('text=私人信件區', timeout=1500)
+                        page.keyboard.press('M')
+                        page.keyboard.press('Enter')
+
+                    isOk = True
+                except Exception as e:
+                    isRelogin = page.locator('text=重複登入')
+                    isAnyKey = page.locator('text=任意鍵')
+                    isMailMenu = page.locator('text=郵件選單')
+                    if (isRelogin.is_visible()):
+                        page.keyboard.press('Y')
+                        page.keyboard.press('Enter')
+                    if (isAnyKey.is_visible()):
+                        page.keyboard.press('Enter')
+                    if (isMailMenu.is_visible()):
+                        page.keyboard.press('ArrowLeft')
             
             for post in posts:
                 if post['send'] == "v":
