@@ -57,7 +57,7 @@ class PTTScraper:
                 title = title_element.text.strip()
                 if not title.startswith('[售票]'):
                     continue
-                if any(keyword in title for keyword in ["綁", "合售", "+"]):
+                if any(keyword in title for keyword in ["綁", "合售", "+", "換"]):
                     continue
                 if any(keyword in title for keyword in keywords):
                     author = post.find('div', class_='author').text.strip()
@@ -153,7 +153,7 @@ class PTTScraper:
                 page.wait_for_selector('text=要儲存檔案')
                 page.keyboard.press('S')
                 page.keyboard.press('Enter')
-                page.keyboard.press('N')
+                page.keyboard.press('Y')
                 page.keyboard.press('Enter')
 
                 page.wait_for_selector('text=任意鍵')
