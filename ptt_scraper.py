@@ -57,7 +57,7 @@ class PTTScraper:
                 title = title_element.text.strip()
                 if not title.startswith('[售票]'):
                     continue
-                if any(keyword in title for keyword in ["綁", "合售", "+", "換"]):
+                if any(keyword in title for keyword in ["綁", "綁售", "合售", "+", "換"]):
                     continue
                 if any(keyword in title for keyword in keywords):
                     author = post.find('div', class_='author').text.strip()
